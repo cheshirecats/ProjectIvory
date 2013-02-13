@@ -24,7 +24,7 @@ if ($_POST['a'] == 'forgot')
 } 
 
 $_POST['user'] = trim($_POST['user']);
-$pass_salt = "24humUfrAw".strtolower($_POST['user']);
+$pass_salt = "???????????".strtolower($_POST['user']);
 
 if ($_POST['a'] == 'reset')
 {

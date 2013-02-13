@@ -5,6 +5,6 @@ Warning: the codes are in a total mess!
 3) Install PHP Ratchet
 4) Run ws.php
 5) Modify $socket IP in script.js
-6) Install Memcached for PHP session
+6) Install Memcached for Caching and PHP session
 
 License: MIT

@@ -1,0 +1,9 @@
+Warning: the codes are in a total mess!
+
+1) Import curiousw_db.sql
+2) Modify connect.php
+3) Install PHP Ratchet
+4) Run ws.php
+5) Modify $socket IP in script.js
+
+License: MIT

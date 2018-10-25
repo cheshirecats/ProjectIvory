@@ -1,5 +1,7 @@
 Warning: the codes are in a total mess!
 
+FULL DEMO: http://pivory.com
+
 1) Import curiousw_db.sql
 2) Modify connect.php
 3) Install PHP Ratchet

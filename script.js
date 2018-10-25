@@ -3,20 +3,17 @@
 var left_history = new History('left');
 var mid_history = new History('mid');
 
-var left_raw = new Array();
-var mid_raw = new Array();
-var $_GET = new Array();
+var left_raw = [];
+var mid_raw = [];
+var $_GET = [];
 var acc_working = false;
 
 var $shall_focus_search = false;
 var $shall_focus_post = false;
 var $shall_no_scroll_update = false;
 
-var $coming_in_a = false;
-var $coming_in_b = false;
-
 var job_free = true;
-var job_list = new Array();
+var job_list = [];
 
 var $posting_topic = 0;
 
@@ -39,7 +36,7 @@ var $mid_wrap = $('#mid_wrap');
 
 var $socket;
 var $socket_uid = 0;
-var $socket_callback = new Array();
+var $socket_callback = [];
 var $num_online = '...';
 
 var t4 = 0;
@@ -125,7 +122,7 @@ function pageAmt() {
 
 function History(z) {
 	this.z = z;
-	this.s = new Array();
+	this.s = [];
 	this.t = 0;
 	this.u = 0;
 	this.p = function() {
@@ -458,7 +455,6 @@ function left_top(o)
 }
 function mid_top(o)
 {
-	var $xtop = 0;
 	apply_vis((o != 0.1) && (mid_x() != 0), $('#qbd'));
 	if (o == 0.1)
 		o = mid_x();
@@ -565,9 +561,11 @@ function apply_status(x, y) {
 }
 function apply_vis(x, y) {
 	if (!x) {
-		y.addClass('trans');
+		y.hide();
+		//y.addClass('trans');
 	} else {
-		y.removeClass('trans');
+		y.show();
+		//y.removeClass('trans');
 	}
 }
 
@@ -769,8 +767,8 @@ function makeScroll(target, post_func, par) {
 	if ($(target).attr('down') > 0) {
 		$(target + ' .item:last').before('<span class="tdown">&#9660;</span>');
 	}
-	$(target + ' .tup').bind('mousedown', function (e, a) {_makeScroll(-1, a)});
-	$(target + ' .tdown').bind('mousedown', function (e, a) {_makeScroll(+1, a)});
+	$(target + ' .tup').on('mousedown', function (e, a) {_makeScroll(-1, a)});
+	$(target + ' .tdown').on('mousedown', function (e, a) {_makeScroll(+1, a)});
 }
 
 function switchView(force_full) {
@@ -1064,7 +1062,7 @@ function inp2mar($txt)
 
 function msg2HTML(str)
 {
-	var r = str.split('<>'); var out = ''; var x = new Array(), y = new Array(), z = new Array(), zz = new Array(); var i = 0;
+	var r = str.split('<>'); var out = ''; var x = [], y = [], z = [], zz = []; var i = 0;
 	var begin = 0, up = 0, down = 0;
 	
 	var is_full = (r[0].substr(3, 1) != 'x');
@@ -1662,7 +1660,7 @@ function myModifyList($mode) {
 }
 
 function xpost($str) {
-	$str.a = $_GET['a'];
+	$str.a = $_GET.a;
 	$('#message').html('Connecting...');
 	$.post('account_db.php', $str, function (msg)
 	{
@@ -1850,7 +1848,7 @@ function t_lock_button() {
 		post('lock', {a:'xlo', n:$nn}, function(msg) 
 		{
 			if (msg.length == 2) {
-				$('#post').attr('s', parseInt(msg.charAt(1)));;
+				$('#post').attr('s', parseInt(msg.charAt(1)));
 				updateTopicTitle();
 				updateNavTitle(Math.abs($nn), parseInt(msg.charAt(1)));
 				left_history.p();
@@ -2110,14 +2108,16 @@ function htmlspecialchars(string) {
 			this.scrollTop = 999999;
 		});
 	};
-})(jQuery);$(document).ready(function () {
+})(jQuery);
+
+$(document).ready(function () {
 
 if (!window.WebSocket) {
 	$('#wrap').hide();
 	$('#bad_ie').show();
 }
 
-$(document).on('hover', '.button, .hover, .tmark, .aaa, .tup, .tdown', hover_1);
+$(document).on('mouseenter mouseleave', '.button, .hover, .tmark, .aaa, .tup, .tdown', hover_1);
 
 document.location.search.replace(/\??(?:([^=]+)=([^&]*)&?)/g, function () {
 	function decode(s) {
@@ -2146,7 +2146,7 @@ else
 	
 prepareUserCssBox();
 
-$(window).bind('hashchange', function() {
+$(window).on('hashchange', function() {
 	goHash();
 });
 
@@ -2186,27 +2186,27 @@ $socket.onmessage = function(e) {
 	}
 };
 
-$(document).on('hover', '#qca', hover_1a);
-$(document).on('hover', '#qcb', hover_1b);
-$(document).on('hover', '#nav .item p', hover_2);
-$(document).on('hover', '#nav .trep', hover_2a);
-$(document).on('hover', '#qaa, #qab, #qac, #qad, #qba, #qbb, #qbc, #qbd, #qca, #qcb, #qda, #qdb, #qdc, #qdd, #qea, #qfa', hover_3);
+$(document).on('mouseenter mouseleave', '#qca', hover_1a);
+$(document).on('mouseenter mouseleave', '#qcb', hover_1b);
+$(document).on('mouseenter mouseleave', '#nav .item p', hover_2);
+$(document).on('mouseenter mouseleave', '#nav .trep', hover_2a);
+$(document).on('mouseenter mouseleave', '#qaa, #qab, #qac, #qad, #qba, #qbb, #qbc, #qbd, #qca, #qcb, #qda, #qdb, #qdc, #qdd, #qea, #qfa', hover_3);
 
 document.addEventListener('mousewheel', wheel, false);
 document.addEventListener('DOMMouseScroll', wheel, false);
 
-$(document).bind('touchstart', function(e) {
+$(document).on('touchstart', function(e) {
 	e = e.originalEvent.touches[0];
 	var sY = e.pageY;
-	$(document).bind('touchmove',function(ev) {
+	$(document).on('touchmove',function(ev) {
     ev.preventDefault();
     ev = ev.originalEvent.touches[0];
 		ev.wheelDelta = ev.pageY - sY;
 		wheel(ev);
 	});
-	$(document).bind('touchend',function(ev)
+	$(document).on('touchend',function(ev)
 	{
-    $(document).unbind('touchmove touchend');
+    $(document).off('touchmove touchend');
 	});
 });
 

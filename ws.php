@@ -10,18 +10,27 @@
 	use Ratchet\MessageComponentInterface;
 	use Ratchet\ConnectionInterface;
 	use Ratchet\Server\IoServer;
+	use Ratchet\Http\HttpServer;
 	use Ratchet\WebSocket\WsServer;	
 
 	$GLOBALS['mcache']->set('pivory.threads.list', '');
+	$GLOBALS['sessionPrefix'] = (get_class($GLOBALS['mcache']) == 'Memcache') ? '' : 'memc.sess.key.';
 
 	$GLOBALS['dddd'] = new DateTime();
 	$GLOBALS['job_last_usr_count'] = 0;
 	$GLOBALS['job_new_thread'] = new \SplObjectStorage;
 	$GLOBALS['clients'] = new \SplObjectStorage;
 	
+	function debug($msg) {
+		//print($msg);
+	}
+
 	function fetchses($conn) {
 		$return_data = array();
-		$session_data = $GLOBALS['mcache']->get('memc.sess.key.'.substr($conn->WebSocket->request->getPath(), 1));
+
+		$id = substr($conn->httpRequest->getUri()->getPath(), 1);
+		$session_data = $GLOBALS['mcache']->get($GLOBALS['sessionPrefix'].$id);
+		debug($id.' sess '.$session_data);
 		$offset = 0;
 		while ($offset < strlen($session_data)) {
 			if (!strstr(substr($session_data, $offset), "|")) {
@@ -190,6 +199,7 @@
 		}
 
 		public function onOpen(ConnectionInterface $conn) {
+			debug('open');
 			$ses = fetchses($conn);
 			if (isset($ses['user_level'])) {
 				$GLOBALS['clients']->attach($conn, $GLOBALS['dddd']->getTimestamp());
@@ -197,14 +207,17 @@
 		}
 
 		public function onClose(ConnectionInterface $conn) {
+			debug('close');
 			$GLOBALS['clients']->detach($conn);
 		}
 
 		public function onError(ConnectionInterface $conn, \Exception $e) {
+			debug('err '.e);
 			$conn->close();
 		}
 		
 		public function onMessage(ConnectionInterface $conn, $msg) {
+			debug('msg '.$msg);
 			if (!$GLOBALS['clients']->contains($conn)) return;
 			if ($msg == '.') {
 				$GLOBALS['clients'][$conn] = $GLOBALS['dddd']->getTimestamp();
@@ -218,8 +231,7 @@
 	}
 
 	$loop = React\EventLoop\Factory::create();
-	$socket = new React\Socket\Server($loop); 
-	$socket->listen(8080, '0.0.0.0');
+	$socket = new React\Socket\Server('0.0.0.0:8080', $loop); 
 
 	$loop->addPeriodicTimer(1, function () {
 		// kill hanging
@@ -250,6 +262,6 @@
 		}
 	});
 
-	$GLOBALS['server'] = new IoServer(new WsServer(new WS_SERVER()), $socket, $loop);
+	$GLOBALS['server'] = new IoServer(new HttpServer(new WsServer(new WS_SERVER())), $socket, $loop);
 	$GLOBALS['server']->run();
 ?>

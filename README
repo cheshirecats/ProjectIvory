@@ -4,7 +4,8 @@ Warning: the codes are in a total mess!
 2) Modify connect.php
 3) Install PHP Ratchet
 4) Install PHP Memcached for caching and session
-5) Run ws.php
-6) Modify $socket IP in script.js
+5) php ws.php for WebSocket server
 
 License: MIT
+
+Simpler version: https://github.com/cheshirecats/CuriousWall

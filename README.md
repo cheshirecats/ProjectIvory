@@ -1,4 +1,4 @@
-Warning: the codes are in a total mess!
+Warning: the codes are in a total mess.
 
 FULL DEMO: http://pivory.com
 
